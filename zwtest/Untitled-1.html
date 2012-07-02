@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/highcharts.js"></script>
+<script type="text/javascript">
+$(function(){
+	var socket = new WebSocket('ws://127.0.0.1:8080');
+	var temp = [0,1];
+	var chart = new Highcharts.Chart({
+		chart:{renderTo:'container'},
+		series:[{
+			     type:'spline',
+				 name:'zw',
+				 data:[0,4,1]
+				 
+		       },
+			   {
+			     type:'bar',
+			   name:'zw',
+			   data:[0,1,4]
+			   }
+				   ]
+	});
+        socket.onopen = function(){
+			console.log('连线成功');
+			socket.send('test');
+		}
+		socket.onmassage = function(data){
+			var d = JSON.parse(data.data);
+			console.log('d.data');
+			temp.push(d.data);
+			console.log(temp);
+			chart.series[0].setData(temp);
+		}
+		socket.onclose = function(){
+			console.log('关闭');
+		}
+});
+	
+</script>
+</head>
+
+<body>
+<div id="container" style="height:400px"></div>
+</body>
+</html>
